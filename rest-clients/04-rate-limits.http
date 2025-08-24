@@ -1,0 +1,142 @@
+###
+# Rate Limiting Tests
+# Testing rate limiting functionality and edge cases
+###
+
+### Rate Limit Test - Normal Request
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (1/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (2/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (3/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (4/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (5/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (6/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (7/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (8/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (9/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Multiple Sequential Requests (10/10)
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Rate Limit Test - Authentication Endpoint (1/5)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0000"
+}
+
+###
+
+### Rate Limit Test - Authentication Endpoint (2/5)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0000"
+}
+
+###
+
+### Rate Limit Test - Authentication Endpoint (3/5)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0000"
+}
+
+###
+
+### Rate Limit Test - Authentication Endpoint (4/5)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0000"
+}
+
+###
+
+### Rate Limit Test - Authentication Endpoint (5/5)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0000"
+}
+
+###
+
+### Rate Limit Test - Authentication Endpoint (Should be blocked)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0000"
+}
+
+###
+
+### Rate Limit Test - Different Endpoint After Limit
+GET http://localhost:5000/api
+Content-Type: application/json
+
+###

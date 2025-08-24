@@ -1,0 +1,398 @@
+###
+# Edge Cases and Boundary Testing
+# Testing various edge cases and boundary conditions
+###
+
+### Edge Case - Empty Request Body
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+###
+
+### Edge Case - Whitespace Only Phone Number
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "   ",
+  "pin": "1234"
+}
+
+###
+
+### Edge Case - Whitespace Only PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "   "
+}
+
+###
+
+### Edge Case - Minimum Valid Phone Number Length
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### Edge Case - Maximum Valid Phone Number Length
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "123456789012345",
+  "pin": "1234"
+}
+
+###
+
+### Edge Case - Phone Number with Leading Zeros
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "0123456789",
+  "pin": "1234"
+}
+
+###
+
+### Edge Case - Minimum Valid PIN Length (4 digits)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000001",
+  "pin": "0000"
+}
+
+###
+
+### Edge Case - Maximum Valid PIN Length (4 digits)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000002",
+  "pin": "9999"
+}
+
+###
+
+### Edge Case - PIN with Leading Zeros
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000003",
+  "pin": "0001"
+}
+
+###
+
+### Edge Case - All Zero PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000004",
+  "pin": "0000"
+}
+
+###
+
+### Edge Case - All Nine PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000005",
+  "pin": "9999"
+}
+
+###
+
+### Edge Case - Repeated Digits PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000006",
+  "pin": "1111"
+}
+
+###
+
+### Edge Case - Sequential PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000007",
+  "pin": "1234"
+}
+
+###
+
+### Edge Case - Reverse Sequential PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000008",
+  "pin": "4321"
+}
+
+###
+
+### Edge Case - Extra Fields in Registration
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2000000009",
+  "pin": "1234",
+  "extraField": "should be ignored",
+  "admin": true,
+  "role": "admin"
+}
+
+###
+
+### Edge Case - Case Sensitivity Test (if applicable)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "PHONENUMBER": "2000000010",
+  "PIN": "1234"
+}
+
+###
+
+### Edge Case - Empty Message Content (minimum length)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "",
+  "type": "text"
+}
+
+###
+
+### Edge Case - Single Character Message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "a",
+  "type": "text"
+}
+
+###
+
+### Edge Case - Whitespace Only Message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "   ",
+  "type": "text"
+}
+
+###
+
+### Edge Case - Newline Characters in Message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Line 1\nLine 2\nLine 3",
+  "type": "text"
+}
+
+###
+
+### Edge Case - Tab Characters in Message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Column1\tColumn2\tColumn3",
+  "type": "text"
+}
+
+###
+
+### Edge Case - Self-Message (user sending to themselves)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a3",
+  "content": "Message to myself",
+  "type": "text"
+}
+
+###
+
+### Edge Case - Zero Page Number
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=0&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Negative Page Number
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=-1&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Zero Limit
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=0
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Negative Limit
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=-5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Very Large Page Number
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=999999&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Very Large Limit
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=999999
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Non-numeric Page Parameter
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=abc&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Non-numeric Limit Parameter
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=xyz
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Floating Point Page Number
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1.5&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Floating Point Limit
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=10.5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Empty Search Query
+GET http://localhost:5000/api/chat/search-users?query=
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Very Long Search Query
+GET http://localhost:5000/api/chat/search-users?query=1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Search Query with Special Characters
+GET http://localhost:5000/api/chat/search-users?query=%21%40%23%24%25%5E%26%2A%28%29
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Edge Case - Mark Read with Empty Message IDs Array
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "senderId": "60e96490f38f233001b2c58a4",
+  "messageIds": []
+}
+
+###
+
+### Edge Case - Mark Read with Very Large Array
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "senderId": "60e96490f38f233001b2c58a4",
+  "messageIds": [
+    "60e96490f38f233001b2c58a6", "60e96490f38f233001b2c58a7", "60e96490f38f233001b2c58a8", "60e96490f38f233001b2c58a9", "60e96490f38f233001b2c58aa",
+    "60e96490f38f233001b2c58ab", "60e96490f38f233001b2c58ac", "60e96490f38f233001b2c58ad", "60e96490f38f233001b2c58ae", "60e96490f38f233001b2c58af",
+    "60e96490f38f233001b2c58b0", "60e96490f38f233001b2c58b1", "60e96490f38f233001b2c58b2", "60e96490f38f233001b2c58b3", "60e96490f38f233001b2c58b4",
+    "60e96490f38f233001b2c58b5", "60e96490f38f233001b2c58b6", "60e96490f38f233001b2c58b7", "60e96490f38f233001b2c58b8", "60e96490f38f233001b2c58b9"
+  ]
+}
+
+###
+
+### Edge Case - Update Status with Extra Whitespace
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "status": "  online  "
+}
+
+###
+
+### Edge Case - Update Status with Case Variations
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "status": "ONLINE"
+}
+
+###

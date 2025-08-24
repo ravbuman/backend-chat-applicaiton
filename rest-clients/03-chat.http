@@ -1,0 +1,337 @@
+###
+# Chat Endpoints
+# Real-time messaging and chat functionality testing
+###
+
+### Send Message - One-to-One Chat
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Hello! This is my first message.",
+  "type": "text"
+}
+
+###
+
+### Send Message - Long Text Message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "This is a much longer message to test how the system handles messages with more content. It should work perfectly fine and store the entire message content without any issues. The message handling system is designed to support various message lengths within reasonable limits.",
+  "type": "text"
+}
+
+###
+
+### Send Message - Group Chat
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "groupId": "60e96490f38f233001b2c58a5",
+  "content": "Hello everyone in the group!",
+  "type": "text"
+}
+
+###
+
+### Send Message - No Receiver or Group (should fail)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "content": "This message has no receiver or group",
+  "type": "text"
+}
+
+###
+
+### Send Message - Both Receiver and Group (should fail)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "groupId": "60e96490f38f233001b2c58a5",
+  "content": "This message has both receiver and group",
+  "type": "text"
+}
+
+###
+
+### Send Message - Empty Content
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "",
+  "type": "text"
+}
+
+###
+
+### Send Message - Invalid Type
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Test message",
+  "type": "invalid_type"
+}
+
+###
+
+### Send Message - No Authentication
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "This should fail - no auth token",
+  "type": "text"
+}
+
+###
+
+### Get Chat History - One-to-One
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Chat History - With Pagination
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Chat History - Large Limit
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=100
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Chat History - Invalid User ID
+GET http://localhost:5000/api/chat/history/invalid_user_id
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Chat History - No Authentication
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4
+Content-Type: application/json
+
+###
+
+### Mark Messages as Read
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "senderId": "60e96490f38f233001b2c58a4",
+  "messageIds": ["60e96490f38f233001b2c58a6", "60e96490f38f233001b2c58a7"]
+}
+
+###
+
+### Mark Messages as Read - Empty Message IDs
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "senderId": "60e96490f38f233001b2c58a4",
+  "messageIds": []
+}
+
+###
+
+### Mark Messages as Read - Missing Sender ID
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "messageIds": ["60e96490f38f233001b2c58a6"]
+}
+
+###
+
+### Get Recent Conversations
+GET http://localhost:5000/api/chat/conversations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Recent Conversations - With Pagination
+GET http://localhost:5000/api/chat/conversations?page=1&limit=5
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Recent Conversations - No Authentication
+GET http://localhost:5000/api/chat/conversations
+Content-Type: application/json
+
+###
+
+### Get Unread Message Count
+GET http://localhost:5000/api/chat/unread-count
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Unread Message Count - No Authentication
+GET http://localhost:5000/api/chat/unread-count
+Content-Type: application/json
+
+###
+
+### Update User Status - Online
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "status": "online"
+}
+
+###
+
+### Update User Status - Away
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "status": "away"
+}
+
+###
+
+### Update User Status - Offline
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "status": "offline"
+}
+
+###
+
+### Update User Status - Invalid Status
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "status": "invalid_status"
+}
+
+###
+
+### Update User Status - No Authentication
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+
+{
+  "status": "online"
+}
+
+###
+
+### Get Online Users
+GET http://localhost:5000/api/chat/online-users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Online Users - With Pagination
+GET http://localhost:5000/api/chat/online-users?page=1&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Online Users - No Authentication
+GET http://localhost:5000/api/chat/online-users
+Content-Type: application/json
+
+###
+
+### Search Users by Phone Number
+GET http://localhost:5000/api/chat/search-users?query=1234567890
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Search Users - Partial Phone Number
+GET http://localhost:5000/api/chat/search-users?query=123
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Search Users - No Query Parameter
+GET http://localhost:5000/api/chat/search-users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Search Users - Empty Query
+GET http://localhost:5000/api/chat/search-users?query=
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Search Users - No Authentication
+GET http://localhost:5000/api/chat/search-users?query=1234567890
+Content-Type: application/json
+
+###
+
+### Delete Message
+DELETE http://localhost:5000/api/chat/message/60e96490f38f233001b2c58a6
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Delete Message - Invalid Message ID
+DELETE http://localhost:5000/api/chat/message/invalid_message_id
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Delete Message - No Authentication
+DELETE http://localhost:5000/api/chat/message/60e96490f38f233001b2c58a6
+Content-Type: application/json
+
+###

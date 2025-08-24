@@ -1,0 +1,225 @@
+###
+# Error Handling Tests
+# Testing various error scenarios and edge cases
+###
+
+### 404 Error - Non-existent Endpoint
+GET http://localhost:5000/api/non-existent-endpoint
+Content-Type: application/json
+
+###
+
+### 404 Error - Wrong Method on Existing Endpoint
+PUT http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### 404 Error - Nested Non-existent Endpoint
+GET http://localhost:5000/api/auth/non-existent
+Content-Type: application/json
+
+###
+
+### 400 Error - Invalid JSON in Request Body
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234",
+  "invalidField": 
+}
+
+###
+
+### 400 Error - Missing Content-Type Header
+POST http://localhost:5000/api/auth/register
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### 413 Error - Large Request Body (if payload limit is set)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This message is intentionally very long to test payload limits and error handling in the system. It contains multiple paragraphs and should trigger any payload size restrictions if they exist in the server configuration.",
+  "type": "text"
+}
+
+###
+
+### 405 Error - Method Not Allowed
+PATCH http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### 500 Error - Server Error Simulation (Invalid MongoDB ObjectId)
+GET http://localhost:5000/api/chat/history/invalid-objectid-format
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Special Characters in Request Body
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Testing special characters: !@#$%^&*()_+-={}[]|\\:;\"'<>?,./ and emojis: 😀😃😄😁🚀💻📱",
+  "type": "text"
+}
+
+###
+
+### Unicode Characters in Request
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json; charset=utf-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Testing Unicode: Hello 世界! مرحبا بالعالم! Здравствуй мир! नमस्ते दुनिया!",
+  "type": "text"
+}
+
+###
+
+### SQL Injection Attempt in Phone Number
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890'; DROP TABLE users; --",
+  "pin": "1234"
+}
+
+###
+
+### XSS Attempt in Message Content
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "<script>alert('XSS Attack!')</script>",
+  "type": "text"
+}
+
+###
+
+### NoSQL Injection Attempt
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": { "$ne": null },
+  "pin": { "$ne": null }
+}
+
+###
+
+### Malformed Authorization Header
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: InvalidTokenFormat
+
+###
+
+### Empty Authorization Header
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: 
+
+###
+
+### Malformed JWT Token
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer not.a.valid.jwt.token
+
+###
+
+### Expired Token Simulation (manually created expired token)
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTkzNzQ4OH0.expired_token_signature
+
+###
+
+### Null Values in Required Fields
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": null,
+  "pin": null
+}
+
+###
+
+### Undefined Values in Required Fields  
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": undefined,
+  "pin": undefined
+}
+
+###
+
+### Numeric Values as Strings
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": 1234567890,
+  "pin": 1234
+}
+
+###
+
+### Boolean Values in String Fields
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": true,
+  "pin": false
+}
+
+###
+
+### Array Values in String Fields
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": ["1234567890"],
+  "pin": ["1234"]
+}
+
+###
+
+### Object Values in String Fields
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": {"value": "1234567890"},
+  "pin": {"value": "1234"}
+}
+
+###

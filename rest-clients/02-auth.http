@@ -1,0 +1,289 @@
+###
+# Authentication Endpoints
+# Phone number + PIN authentication system testing
+###
+
+### Register New User - Valid Case
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### Register New User - Different Phone
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "9876543210",
+  "pin": "5678"
+}
+
+###
+
+### Register New User - Invalid Phone (too short)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "123",
+  "pin": "1234"
+}
+
+###
+
+### Register New User - Invalid Phone (too long)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "12345678901234567890",
+  "pin": "1234"
+}
+
+###
+
+### Register New User - Invalid PIN (too short)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1111111111",
+  "pin": "12"
+}
+
+###
+
+### Register New User - Invalid PIN (too long)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1111111111",
+  "pin": "123456"
+}
+
+###
+
+### Register New User - Missing Phone Number
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "pin": "1234"
+}
+
+###
+
+### Register New User - Missing PIN
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "2222222222"
+}
+
+###
+
+### Register New User - Empty Body
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{}
+
+###
+
+### Register Duplicate Phone Number (should fail)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "9999"
+}
+
+###
+
+### Login User - Valid Credentials
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### Login User - Different Valid User
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "9876543210",
+  "pin": "5678"
+}
+
+###
+
+### Login User - Wrong PIN
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "9999"
+}
+
+###
+
+### Login User - Non-existent Phone
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "0000000000",
+  "pin": "1234"
+}
+
+###
+
+### Login User - Missing Phone Number
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "pin": "1234"
+}
+
+###
+
+### Login User - Missing PIN
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890"
+}
+
+###
+
+### Login User - Empty Body
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{}
+
+###
+
+### Get Current User Profile (requires authentication)
+# Note: Replace the Authorization token with actual JWT from login response
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Get Current User Profile - No Token
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+
+###
+
+### Get Current User Profile - Invalid Token
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer invalid_token_here
+
+###
+
+### Get Session Status (no auth required)
+GET http://localhost:5000/api/auth/session-status
+Content-Type: application/json
+
+###
+
+### Get Session Status with Token
+GET http://localhost:5000/api/auth/session-status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Verify PIN for Session Continuation
+POST http://localhost:5000/api/auth/verify-pin
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "pin": "1234"
+}
+
+###
+
+### Verify PIN - Wrong PIN
+POST http://localhost:5000/api/auth/verify-pin
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "pin": "9999"
+}
+
+###
+
+### Verify PIN - No Token
+POST http://localhost:5000/api/auth/verify-pin
+Content-Type: application/json
+
+{
+  "pin": "1234"
+}
+
+###
+
+### Verify PIN - Missing PIN
+POST http://localhost:5000/api/auth/verify-pin
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{}
+
+###
+
+### Refresh Access Token
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTYyNTkzNzQ4NywiZXhwIjoxNjI2NTQyMjg3fQ.sample_refresh_token
+
+###
+
+### Refresh Token - No Cookie
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+
+###
+
+### Refresh Token - Invalid Cookie
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+Cookie: refreshToken=invalid_refresh_token
+
+###
+
+### Logout User
+POST http://localhost:5000/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Logout User - No Token
+POST http://localhost:5000/api/auth/logout
+Content-Type: application/json
+
+###

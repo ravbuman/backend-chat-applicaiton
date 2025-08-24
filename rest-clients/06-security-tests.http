@@ -1,0 +1,265 @@
+###
+# Security Tests
+# Testing security features and potential vulnerabilities
+###
+
+### CORS Test - Preflight Request
+OPTIONS http://localhost:5000/api/auth/register
+Origin: http://localhost:3000
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+
+###
+
+### CORS Test - Invalid Origin
+OPTIONS http://localhost:5000/api/auth/register
+Origin: http://malicious-site.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+
+###
+
+### Security Headers Test
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Content Security Policy Test
+GET http://localhost:5000/api
+Content-Type: application/json
+
+###
+
+### Authentication Bypass Attempt - Missing Bearer Prefix
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### JWT Tampering Attempt - Modified Payload
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZG1pbiIsInBob25lTnVtYmVyIjoiMTIzNDU2Nzg5MCIsImlhdCI6MTYyNTkzNzQ4NywiZXhwIjoxNjI1OTQxMDg3fQ.invalid_signature
+
+###
+
+### JWT Algorithm Confusion Attack - None Algorithm
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.
+
+###
+
+### Session Fixation Attempt - Custom Session ID
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+Cookie: sessionId=custom_session_id_123
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### Brute Force Protection Test - Rapid Login Attempts
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0001"
+}
+
+###
+
+### Brute Force Protection Test - Rapid Login Attempts
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0002"
+}
+
+###
+
+### Brute Force Protection Test - Rapid Login Attempts
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0003"
+}
+
+###
+
+### Brute Force Protection Test - Rapid Login Attempts
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0004"
+}
+
+###
+
+### Brute Force Protection Test - Rapid Login Attempts
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0005"
+}
+
+###
+
+### Brute Force Protection Test - Should be blocked
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "0006"
+}
+
+###
+
+### Path Traversal Attempt in User ID
+GET http://localhost:5000/api/chat/history/../../../etc/passwd
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### HTTP Parameter Pollution - Multiple phoneNumber values
+POST http://localhost:5000/api/auth/register
+Content-Type: application/x-www-form-urlencoded
+
+phoneNumber=1111111111&phoneNumber=2222222222&pin=1234
+
+###
+
+### HTTP Header Injection Attempt
+GET http://localhost:5000/health
+Content-Type: application/json
+X-Forwarded-For: 127.0.0.1%0d%0aSet-Cookie:%20malicious=true
+
+###
+
+### Host Header Injection
+GET http://localhost:5000/health
+Host: malicious-host.com
+Content-Type: application/json
+
+###
+
+### Request Smuggling Attempt - Transfer-Encoding
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+Transfer-Encoding: chunked
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### Cookie Injection Attempt
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+Cookie: admin=true; role=admin; authenticated=true
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234"
+}
+
+###
+
+### XML External Entity (XXE) Attack - If XML is accepted
+POST http://localhost:5000/api/auth/register
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE foo [
+  <!ELEMENT foo ANY >
+  <!ENTITY xxe SYSTEM "file:///etc/passwd" >
+]>
+<root>
+  <phoneNumber>&xxe;</phoneNumber>
+  <pin>1234</pin>
+</root>
+
+###
+
+### Server-Side Request Forgery (SSRF) Attempt in URL
+GET http://localhost:5000/api/chat/search-users?query=http://internal-server:8080/admin
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Prototype Pollution Attempt
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890",
+  "pin": "1234",
+  "__proto__": {
+    "isAdmin": true
+  }
+}
+
+###
+
+### Command Injection Attempt in Phone Number
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890; rm -rf /",
+  "pin": "1234"
+}
+
+###
+
+### LDAP Injection Attempt
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890)(|(password=*))",
+  "pin": "1234"
+}
+
+###
+
+### Buffer Overflow Attempt - Very Long Phone Number
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
+  "pin": "1234"
+}
+
+###
+
+### Regular Expression Denial of Service (ReDoS) Attempt
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1234567890(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((",
+  "pin": "1234"
+}
+
+###

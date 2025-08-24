@@ -1,0 +1,22 @@
+###
+# Health Check Endpoint
+# Tests server health and database connectivity
+###
+
+### Health Check - Basic
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Health Check - Detailed (should return same as basic)
+GET http://localhost:5000/health
+Accept: application/json
+
+###
+
+### API Documentation Root
+GET http://localhost:5000/api
+Content-Type: application/json
+
+###

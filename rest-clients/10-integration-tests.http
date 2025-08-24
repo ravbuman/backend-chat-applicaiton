@@ -1,0 +1,364 @@
+###
+# Integration Tests
+# End-to-end workflow testing combining multiple endpoints
+###
+
+### Complete User Registration and Login Flow - User 1
+# Step 1: Register User 1
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "3000000001",
+  "pin": "1111"
+}
+
+### Step 2: Login User 1 (use the response to get JWT token)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "3000000001",
+  "pin": "1111"
+}
+
+### Step 3: Get User 1 Profile (replace token with actual JWT from login)
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 4: Update User 1 Status to Online
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "status": "online"
+}
+
+###
+
+### Complete User Registration and Login Flow - User 2
+# Step 1: Register User 2
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "3000000002",
+  "pin": "2222"
+}
+
+### Step 2: Login User 2
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "3000000002",
+  "pin": "2222"
+}
+
+### Step 3: Get User 2 Profile
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+### Step 4: Update User 2 Status to Online
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+{
+  "status": "online"
+}
+
+###
+
+### Chat Workflow - User 1 sends message to User 2
+# Step 1: User 1 searches for User 2
+GET http://localhost:5000/api/chat/search-users?query=3000000002
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 2: User 1 sends message to User 2 (use User 2's ID from search response)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "receiverId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "content": "Hello User 2! This is User 1.",
+  "type": "text"
+}
+
+### Step 3: User 2 gets chat history with User 1 (use User 1's ID)
+GET http://localhost:5000/api/chat/history/USER_1_ID_FROM_RESPONSE
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+### Step 4: User 2 replies to User 1
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+{
+  "receiverId": "USER_1_ID_FROM_RESPONSE",
+  "content": "Hi User 1! Nice to meet you.",
+  "type": "text"
+}
+
+### Step 5: User 1 gets updated chat history
+GET http://localhost:5000/api/chat/history/USER_2_ID_FROM_SEARCH_RESPONSE
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 6: User 1 marks messages as read (use message IDs from history)
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "senderId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "messageIds": ["MESSAGE_ID_1", "MESSAGE_ID_2"]
+}
+
+###
+
+### Conversation Management Workflow
+# Step 1: User 1 gets recent conversations
+GET http://localhost:5000/api/chat/conversations
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 2: User 1 gets unread message count
+GET http://localhost:5000/api/chat/unread-count
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 3: User 1 gets online users
+GET http://localhost:5000/api/chat/online-users
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+###
+
+### Session Management Workflow
+# Step 1: Check session status
+GET http://localhost:5000/api/auth/session-status
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 2: Verify PIN for session continuation
+POST http://localhost:5000/api/auth/verify-pin
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "pin": "1111"
+}
+
+### Step 3: Refresh access token
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+Cookie: refreshToken=YOUR_REFRESH_TOKEN_FROM_COOKIE
+
+###
+
+### Multi-Message Conversation Flow
+# Step 1: User 1 sends multiple messages
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "receiverId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "content": "How are you doing?",
+  "type": "text"
+}
+
+### Step 2: User 1 sends another message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "receiverId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "content": "Are you free to chat?",
+  "type": "text"
+}
+
+### Step 3: User 2 responds
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+{
+  "receiverId": "USER_1_ID_FROM_RESPONSE",
+  "content": "I'm doing great! Yes, I'm free.",
+  "type": "text"
+}
+
+### Step 4: User 2 sends another message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+{
+  "receiverId": "USER_1_ID_FROM_RESPONSE",
+  "content": "What's up?",
+  "type": "text"
+}
+
+### Step 5: Get full conversation history
+GET http://localhost:5000/api/chat/history/USER_2_ID_FROM_SEARCH_RESPONSE?page=1&limit=50
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+###
+
+### User Status Management Flow
+# Step 1: User 1 goes away
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "status": "away"
+}
+
+### Step 2: User 2 checks online users (should show User 1 as away)
+GET http://localhost:5000/api/chat/online-users
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+### Step 3: User 1 comes back online
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "status": "online"
+}
+
+### Step 4: User 1 goes offline
+POST http://localhost:5000/api/chat/status
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "status": "offline"
+}
+
+###
+
+### Message Deletion Workflow
+# Step 1: User 1 sends a message
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+{
+  "receiverId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "content": "This message will be deleted",
+  "type": "text"
+}
+
+### Step 2: User 1 deletes the message (use message ID from response)
+DELETE http://localhost:5000/api/chat/message/MESSAGE_ID_FROM_SEND_RESPONSE
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 3: Verify message is marked as deleted in history
+GET http://localhost:5000/api/chat/history/USER_2_ID_FROM_SEARCH_RESPONSE
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+###
+
+### Authentication Error Recovery Flow
+# Step 1: Make request with invalid token
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer invalid_token
+
+### Step 2: Attempt login with wrong PIN
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "3000000001",
+  "pin": "0000"
+}
+
+### Step 3: Successful login after error
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "3000000001",
+  "pin": "1111"
+}
+
+### Step 4: Verify access works again
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer NEW_JWT_TOKEN_FROM_SUCCESSFUL_LOGIN
+
+###
+
+### Complete Logout Flow
+# Step 1: User 1 logs out
+POST http://localhost:5000/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 2: Verify token is invalidated
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_LOGIN_RESPONSE
+
+### Step 3: User 2 logs out
+POST http://localhost:5000/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+### Step 4: Verify User 2 token is invalidated
+GET http://localhost:5000/api/auth/me
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_USER2_LOGIN
+
+###
+
+### Pagination Workflow
+# Step 1: Send multiple messages to create history
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer NEW_JWT_TOKEN_FROM_SUCCESSFUL_LOGIN
+
+{
+  "receiverId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "content": "Message 1 for pagination test",
+  "type": "text"
+}
+
+### Step 2: Send more messages
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer NEW_JWT_TOKEN_FROM_SUCCESSFUL_LOGIN
+
+{
+  "receiverId": "USER_2_ID_FROM_SEARCH_RESPONSE",
+  "content": "Message 2 for pagination test",
+  "type": "text"
+}
+
+### Step 3: Get first page of history
+GET http://localhost:5000/api/chat/history/USER_2_ID_FROM_SEARCH_RESPONSE?page=1&limit=2
+Content-Type: application/json
+Authorization: Bearer NEW_JWT_TOKEN_FROM_SUCCESSFUL_LOGIN
+
+### Step 4: Get second page of history
+GET http://localhost:5000/api/chat/history/USER_2_ID_FROM_SEARCH_RESPONSE?page=2&limit=2
+Content-Type: application/json
+Authorization: Bearer NEW_JWT_TOKEN_FROM_SUCCESSFUL_LOGIN
+
+###

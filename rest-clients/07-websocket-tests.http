@@ -1,0 +1,248 @@
+###
+# WebSocket Testing Documentation
+# Since WebSocket testing requires a different approach, this file contains
+# instructions and examples for testing WebSocket functionality
+###
+
+# WebSocket Connection Test
+# Use a WebSocket client or browser console to test these connections
+
+### Connection URL
+# ws://localhost:5000/socket.io/
+
+### Browser Console WebSocket Test
+# Open browser console at http://localhost:3000 and run:
+# 
+# const socket = io('http://localhost:5000', {
+#   auth: {
+#     token: 'your_jwt_token_here'
+#   }
+# });
+# 
+# socket.on('connect', () => {
+#   console.log('Connected to WebSocket server');
+# });
+# 
+# socket.on('disconnect', () => {
+#   console.log('Disconnected from WebSocket server');
+# });
+
+### Join Room Event
+# socket.emit('join-room', {
+#   roomId: 'user_60e96490f38f233001b2c58a4'
+# });
+
+### Send Message Event
+# socket.emit('send-message', {
+#   receiverId: '60e96490f38f233001b2c58a4',
+#   content: 'Hello from WebSocket!',
+#   type: 'text'
+# });
+
+### Group Message Event
+# socket.emit('send-message', {
+#   groupId: '60e96490f38f233001b2c58a5',
+#   content: 'Hello group from WebSocket!',
+#   type: 'text'
+# });
+
+### Typing Start Event
+# socket.emit('typing-start', {
+#   receiverId: '60e96490f38f233001b2c58a4'
+# });
+
+### Typing Stop Event
+# socket.emit('typing-stop', {
+#   receiverId: '60e96490f38f233001b2c58a4'
+# });
+
+### User Status Update Event
+# socket.emit('user-status', {
+#   status: 'online'
+# });
+
+### Listen for Message Received
+# socket.on('message-received', (data) => {
+#   console.log('New message received:', data);
+# });
+
+### Listen for Message Delivered
+# socket.on('message-delivered', (data) => {
+#   console.log('Message delivered:', data);
+# });
+
+### Listen for Message Read
+# socket.on('message-read', (data) => {
+#   console.log('Message read:', data);
+# });
+
+### Listen for User Online
+# socket.on('user-online', (data) => {
+#   console.log('User came online:', data);
+# });
+
+### Listen for User Offline
+# socket.on('user-offline', (data) => {
+#   console.log('User went offline:', data);
+# });
+
+### Listen for Typing Start
+# socket.on('typing-start', (data) => {
+#   console.log('User started typing:', data);
+# });
+
+### Listen for Typing Stop
+# socket.on('typing-stop', (data) => {
+#   console.log('User stopped typing:', data);
+# });
+
+### Listen for Session Warning
+# socket.on('session-warning', (data) => {
+#   console.log('Session warning:', data);
+# });
+
+### Listen for Session Timeout
+# socket.on('session-timeout', (data) => {
+#   console.log('Session timeout:', data);
+# });
+
+### Authentication Error Event
+# socket.on('auth-error', (data) => {
+#   console.log('Authentication error:', data);
+# });
+
+### Connection Error Event
+# socket.on('connect_error', (error) => {
+#   console.log('Connection error:', error);
+# });
+
+###
+# Node.js WebSocket Client Test
+# Save this as a separate file (websocket-test.js) and run with: node websocket-test.js
+###
+
+# const io = require('socket.io-client');
+# 
+# // Replace with actual JWT token from login
+# const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token';
+# 
+# const socket = io('http://localhost:5000', {
+#   auth: {
+#     token: token
+#   }
+# });
+# 
+# socket.on('connect', () => {
+#   console.log('✅ Connected to WebSocket server');
+#   console.log('Socket ID:', socket.id);
+#   
+#   // Join a room
+#   socket.emit('join-room', {
+#     roomId: 'user_60e96490f38f233001b2c58a4'
+#   });
+#   
+#   // Send a test message
+#   setTimeout(() => {
+#     socket.emit('send-message', {
+#       receiverId: '60e96490f38f233001b2c58a4',
+#       content: 'Test message from Node.js client',
+#       type: 'text'
+#     });
+#   }, 1000);
+#   
+#   // Test typing indicators
+#   setTimeout(() => {
+#     socket.emit('typing-start', {
+#       receiverId: '60e96490f38f233001b2c58a4'
+#     });
+#     
+#     setTimeout(() => {
+#       socket.emit('typing-stop', {
+#         receiverId: '60e96490f38f233001b2c58a4'
+#       });
+#     }, 3000);
+#   }, 2000);
+# });
+# 
+# socket.on('message-received', (data) => {
+#   console.log('📨 Message received:', data);
+# });
+# 
+# socket.on('message-delivered', (data) => {
+#   console.log('✅ Message delivered:', data);
+# });
+# 
+# socket.on('user-online', (data) => {
+#   console.log('🟢 User online:', data);
+# });
+# 
+# socket.on('user-offline', (data) => {
+#   console.log('🔴 User offline:', data);
+# });
+# 
+# socket.on('typing-start', (data) => {
+#   console.log('⌨️ User typing:', data);
+# });
+# 
+# socket.on('typing-stop', (data) => {
+#   console.log('✋ User stopped typing:', data);
+# });
+# 
+# socket.on('auth-error', (data) => {
+#   console.log('❌ Authentication error:', data);
+# });
+# 
+# socket.on('connect_error', (error) => {
+#   console.log('❌ Connection error:', error);
+# });
+# 
+# socket.on('disconnect', (reason) => {
+#   console.log('❌ Disconnected:', reason);
+# });
+# 
+# // Disconnect after 30 seconds
+# setTimeout(() => {
+#   socket.disconnect();
+#   process.exit(0);
+# }, 30000);
+
+###
+# WebSocket Load Testing
+# For testing multiple concurrent connections
+###
+
+# const io = require('socket.io-client');
+# 
+# const numberOfClients = 10;
+# const clients = [];
+# 
+# for (let i = 0; i < numberOfClients; i++) {
+#   const socket = io('http://localhost:5000', {
+#     auth: {
+#       token: 'your_jwt_token_here'
+#     }
+#   });
+#   
+#   socket.on('connect', () => {
+#     console.log(`Client ${i + 1} connected`);
+#     
+#     // Each client sends a message every 5 seconds
+#     setInterval(() => {
+#       socket.emit('send-message', {
+#         receiverId: '60e96490f38f233001b2c58a4',
+#         content: `Message from client ${i + 1}`,
+#         type: 'text'
+#       });
+#     }, 5000);
+#   });
+#   
+#   clients.push(socket);
+# }
+# 
+# // Disconnect all clients after 60 seconds
+# setTimeout(() => {
+#   clients.forEach(socket => socket.disconnect());
+#   process.exit(0);
+# }, 60000);
+
+###

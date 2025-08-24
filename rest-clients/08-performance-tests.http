@@ -1,0 +1,294 @@
+###
+# Performance and Load Testing
+# Testing server performance under various load conditions
+###
+
+### Single Request Baseline
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Concurrent Request Test - Authentication (Batch 1)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000001",
+  "pin": "1111"
+}
+
+###
+
+### Concurrent Request Test - Authentication (Batch 2)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000002",
+  "pin": "1111"
+}
+
+###
+
+### Concurrent Request Test - Authentication (Batch 3)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000003",
+  "pin": "1111"
+}
+
+###
+
+### Concurrent Request Test - Authentication (Batch 4)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000004",
+  "pin": "1111"
+}
+
+###
+
+### Concurrent Request Test - Authentication (Batch 5)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000005",
+  "pin": "1111"
+}
+
+###
+
+### Login Performance Test (Batch 1)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000001",
+  "pin": "1111"
+}
+
+###
+
+### Login Performance Test (Batch 2)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000002",
+  "pin": "1111"
+}
+
+###
+
+### Login Performance Test (Batch 3)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000003",
+  "pin": "1111"
+}
+
+###
+
+### Login Performance Test (Batch 4)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000004",
+  "pin": "1111"
+}
+
+###
+
+### Login Performance Test (Batch 5)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "1000000005",
+  "pin": "1111"
+}
+
+###
+
+### Message Sending Performance Test (Batch 1)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Performance test message 1",
+  "type": "text"
+}
+
+###
+
+### Message Sending Performance Test (Batch 2)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Performance test message 2",
+  "type": "text"
+}
+
+###
+
+### Message Sending Performance Test (Batch 3)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Performance test message 3",
+  "type": "text"
+}
+
+###
+
+### Message Sending Performance Test (Batch 4)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Performance test message 4",
+  "type": "text"
+}
+
+###
+
+### Message Sending Performance Test (Batch 5)
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Performance test message 5",
+  "type": "text"
+}
+
+###
+
+### Large Message Content Test
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "This is a large message content test to evaluate how the server handles messages with substantial text content. The message includes multiple paragraphs and various types of content to simulate real-world usage scenarios. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+  "type": "text"
+}
+
+###
+
+### Chat History Retrieval Performance Test (Small Limit)
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=10
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Chat History Retrieval Performance Test (Medium Limit)
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=50
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Chat History Retrieval Performance Test (Large Limit)
+GET http://localhost:5000/api/chat/history/60e96490f38f233001b2c58a4?page=1&limit=100
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Conversations List Performance Test
+GET http://localhost:5000/api/chat/conversations?page=1&limit=20
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### User Search Performance Test
+GET http://localhost:5000/api/chat/search-users?query=100
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Online Users Performance Test
+GET http://localhost:5000/api/chat/online-users?page=1&limit=50
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+###
+
+### Memory Stress Test - Multiple Large Requests
+POST http://localhost:5000/api/chat/send
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "receiverId": "60e96490f38f233001b2c58a4",
+  "content": "Memory stress test - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
+  "type": "text"
+}
+
+###
+
+### Database Stress Test - Mark Multiple Messages as Read
+POST http://localhost:5000/api/chat/mark-read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
+
+{
+  "senderId": "60e96490f38f233001b2c58a4",
+  "messageIds": [
+    "60e96490f38f233001b2c58a6",
+    "60e96490f38f233001b2c58a7",
+    "60e96490f38f233001b2c58a8",
+    "60e96490f38f233001b2c58a9",
+    "60e96490f38f233001b2c58aa",
+    "60e96490f38f233001b2c58ab",
+    "60e96490f38f233001b2c58ac",
+    "60e96490f38f233001b2c58ad",
+    "60e96490f38f233001b2c58ae",
+    "60e96490f38f233001b2c58af"
+  ]
+}
+
+###
+
+### Response Time Test - Health Check
+GET http://localhost:5000/health
+Content-Type: application/json
+
+###
+
+### Response Time Test - API Documentation
+GET http://localhost:5000/api
+Content-Type: application/json
+
+###
+
+### Response Time Test - Session Status
+GET http://localhost:5000/api/auth/session-status
+Content-Type: application/json
+
+###

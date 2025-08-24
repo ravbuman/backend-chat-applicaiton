@@ -1,0 +1,636 @@
+/**
+ * Message Data Model
+ * MongoDB schema for chat messages with support for one-to-one and group chat
+ * 
+ * @description Message entity with delivery status, encryption, and metadata
+ * @author Chat App Team
+ * @version 1.0.0
+ */
+
+const mongoose = require('mongoose');
+const moment = require('moment');
+const logger = require('../utils/logger');
+
+/**
+ * Message Schema Definition
+ * Supports both one-to-one and group messaging with delivery tracking
+ */
+const messageSchema = new mongoose.Schema({
+  // Message identification
+  messageId: {
+    type: String,
+    unique: true,
+    required: true
+  },
+
+  // Sender information
+  senderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Sender ID is required'],
+    index: true
+  },
+
+  // Recipient information (one-to-one chat)
+  receiverId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    validate: {
+      validator: function(v) {
+        // Either receiverId or groupId must be present, but not both
+        return (v && !this.groupId) || (!v && this.groupId);
+      },
+      message: 'Message must have either receiverId or groupId, but not both'
+    }
+  },
+
+  // Group information (group chat)
+  groupId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    index: true,
+    validate: {
+      validator: function(v) {
+        // Either receiverId or groupId must be present, but not both
+        return (v && !this.receiverId) || (!v && this.receiverId);
+      },
+      message: 'Message must have either receiverId or groupId, but not both'
+    }
+  },
+
+  // Message content
+  content: {
+    type: String,
+    required: [true, 'Message content is required'],
+    trim: true,
+    maxlength: [1000, 'Message cannot exceed 1000 characters']
+  },
+
+  // Message type and metadata
+  messageType: {
+    type: String,
+    enum: ['text', 'image', 'file', 'system'],
+    default: 'text',
+    index: true
+  },
+
+  // File attachments (for future enhancement)
+  attachments: [{
+    fileName: String,
+    fileUrl: String,
+    fileSize: Number,
+    mimeType: String,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+
+  // Message status and delivery
+  status: {
+    type: String,
+    enum: ['sending', 'sent', 'delivered', 'read', 'failed'],
+    default: 'sent',
+    index: true
+  },
+
+  // Delivery tracking
+  delivery: {
+    sentAt: {
+      type: Date,
+      default: Date.now,
+      index: true
+    },
+    deliveredAt: {
+      type: Date,
+      index: true
+    },
+    readAt: {
+      type: Date,
+      index: true
+    },
+    failedAt: {
+      type: Date
+    },
+    failureReason: String
+  },
+
+  // Reply and thread information
+  replyTo: {
+    messageId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message'
+    },
+    content: String, // Preview of original message
+    senderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  },
+
+  // Message reactions (for future enhancement)
+  reactions: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    emoji: String,
+    reactedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+
+  // Edit history
+  editHistory: [{
+    previousContent: String,
+    editedAt: {
+      type: Date,
+      default: Date.now
+    },
+    editReason: String
+  }],
+
+  // Message flags
+  flags: {
+    isEdited: {
+      type: Boolean,
+      default: false
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
+    isSystem: {
+      type: Boolean,
+      default: false
+    },
+    isPinned: {
+      type: Boolean,
+      default: false
+    },
+    isForwarded: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  // Metadata
+  metadata: {
+    platform: String, // web, mobile, desktop
+    userAgent: String,
+    ipAddress: String,
+    encryption: {
+      isEncrypted: {
+        type: Boolean,
+        default: false
+      },
+      algorithm: String,
+      keyVersion: Number
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      immutable: true,
+      index: true
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }
+}, {
+  timestamps: false, // We handle this manually
+  versionKey: false,
+  collection: 'messages'
+});
+
+/**
+ * Indexes for performance optimization
+ */
+messageSchema.index({ senderId: 1, receiverId: 1, 'metadata.createdAt': -1 });
+messageSchema.index({ groupId: 1, 'metadata.createdAt': -1 });
+messageSchema.index({ messageId: 1 }, { unique: true });
+messageSchema.index({ 'delivery.sentAt': -1 });
+messageSchema.index({ status: 1, 'delivery.sentAt': -1 });
+messageSchema.index({ 'flags.isDeleted': 1, 'metadata.createdAt': -1 });
+
+// Compound index for chat history queries
+messageSchema.index({ 
+  senderId: 1, 
+  receiverId: 1, 
+  'flags.isDeleted': 1, 
+  'metadata.createdAt': -1 
+});
+
+messageSchema.index({ 
+  groupId: 1, 
+  'flags.isDeleted': 1, 
+  'metadata.createdAt': -1 
+});
+
+/**
+ * Virtual properties
+ */
+messageSchema.virtual('isOneToOne').get(function() {
+  return !!(this.receiverId && !this.groupId);
+});
+
+messageSchema.virtual('isGroupMessage').get(function() {
+  return !!(this.groupId && !this.receiverId);
+});
+
+messageSchema.virtual('deliveryTime').get(function() {
+  if (this.delivery.deliveredAt) {
+    return moment(this.delivery.deliveredAt).diff(moment(this.delivery.sentAt), 'milliseconds');
+  }
+  return null;
+});
+
+messageSchema.virtual('readTime').get(function() {
+  if (this.delivery.readAt) {
+    return moment(this.delivery.readAt).diff(moment(this.delivery.sentAt), 'milliseconds');
+  }
+  return null;
+});
+
+messageSchema.virtual('formattedTime').get(function() {
+  return moment(this.delivery.sentAt).format('HH:mm');
+});
+
+messageSchema.virtual('formattedDate').get(function() {
+  return moment(this.delivery.sentAt).format('YYYY-MM-DD');
+});
+
+/**
+ * Pre-save middleware
+ */
+messageSchema.pre('save', function(next) {
+  try {
+    // Update timestamp
+    this.metadata.updatedAt = new Date();
+
+    // Generate unique message ID if not exists
+    if (this.isNew && !this.messageId) {
+      this.messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    // Set system message flag
+    if (this.messageType === 'system') {
+      this.flags.isSystem = true;
+    }
+
+    // Validate content length for non-system messages
+    if (!this.flags.isSystem && this.content.length > 1000) {
+      throw new Error('Message content exceeds maximum length');
+    }
+
+    next();
+  } catch (error) {
+    logger.error('Error in message pre-save middleware:', error);
+    next(error);
+  }
+});
+
+/**
+ * Post-save middleware
+ */
+messageSchema.post('save', function(doc) {
+  logger.logDatabase('MESSAGE_SAVED', 'messages', {
+    messageId: doc.messageId,
+    senderId: doc.senderId,
+    receiverId: doc.receiverId,
+    groupId: doc.groupId,
+    messageType: doc.messageType
+  });
+});
+
+/**
+ * Instance Methods
+ */
+
+/**
+ * Mark message as delivered
+ * @returns {Promise<void>}
+ */
+messageSchema.methods.markAsDelivered = async function() {
+  try {
+    if (this.status === 'sent') {
+      this.status = 'delivered';
+      this.delivery.deliveredAt = new Date();
+      await this.save({ validateBeforeSave: false });
+      
+      logger.debug('Message marked as delivered', {
+        messageId: this.messageId,
+        deliveredAt: this.delivery.deliveredAt
+      });
+    }
+  } catch (error) {
+    logger.error('Error marking message as delivered:', error);
+  }
+};
+
+/**
+ * Mark message as read
+ * @returns {Promise<void>}
+ */
+messageSchema.methods.markAsRead = async function() {
+  try {
+    if (['sent', 'delivered'].includes(this.status)) {
+      this.status = 'read';
+      this.delivery.readAt = new Date();
+      
+      // Also set deliveredAt if not already set
+      if (!this.delivery.deliveredAt) {
+        this.delivery.deliveredAt = this.delivery.readAt;
+      }
+      
+      await this.save({ validateBeforeSave: false });
+      
+      logger.debug('Message marked as read', {
+        messageId: this.messageId,
+        readAt: this.delivery.readAt
+      });
+    }
+  } catch (error) {
+    logger.error('Error marking message as read:', error);
+  }
+};
+
+/**
+ * Mark message as failed
+ * @param {string} reason - Failure reason
+ * @returns {Promise<void>}
+ */
+messageSchema.methods.markAsFailed = async function(reason) {
+  try {
+    this.status = 'failed';
+    this.delivery.failedAt = new Date();
+    this.delivery.failureReason = reason;
+    
+    await this.save({ validateBeforeSave: false });
+    
+    logger.warn('Message marked as failed', {
+      messageId: this.messageId,
+      reason,
+      failedAt: this.delivery.failedAt
+    });
+  } catch (error) {
+    logger.error('Error marking message as failed:', error);
+  }
+};
+
+/**
+ * Soft delete message
+ * @param {string} deletedBy - ID of user who deleted the message
+ * @returns {Promise<void>}
+ */
+messageSchema.methods.softDelete = async function(deletedBy) {
+  try {
+    this.flags.isDeleted = true;
+    this.metadata.deletedBy = deletedBy;
+    this.metadata.deletedAt = new Date();
+    
+    await this.save({ validateBeforeSave: false });
+    
+    logger.info('Message soft deleted', {
+      messageId: this.messageId,
+      deletedBy,
+      deletedAt: this.metadata.deletedAt
+    });
+  } catch (error) {
+    logger.error('Error soft deleting message:', error);
+  }
+};
+
+/**
+ * Edit message content
+ * @param {string} newContent - New message content
+ * @param {string} editReason - Reason for edit
+ * @returns {Promise<void>}
+ */
+messageSchema.methods.editContent = async function(newContent, editReason = '') {
+  try {
+    // Store edit history
+    this.editHistory.push({
+      previousContent: this.content,
+      editedAt: new Date(),
+      editReason
+    });
+    
+    this.content = newContent;
+    this.flags.isEdited = true;
+    this.metadata.updatedAt = new Date();
+    
+    await this.save();
+    
+    logger.info('Message edited', {
+      messageId: this.messageId,
+      editReason,
+      editCount: this.editHistory.length
+    });
+  } catch (error) {
+    logger.error('Error editing message:', error);
+  }
+};
+
+/**
+ * Static Methods
+ */
+
+/**
+ * Get chat history between two users
+ * @param {string} userId1 - First user ID
+ * @param {string} userId2 - Second user ID
+ * @param {Object} options - Pagination options
+ * @returns {Promise<Array>}
+ */
+messageSchema.statics.getChatHistory = function(userId1, userId2, options = {}) {
+  const { page = 1, limit = 20, before = null } = options;
+  const skip = (page - 1) * limit;
+  
+  const query = {
+    $or: [
+      { senderId: userId1, receiverId: userId2 },
+      { senderId: userId2, receiverId: userId1 }
+    ],
+    'flags.isDeleted': false
+  };
+  
+  // Add time filter if before timestamp is provided
+  if (before) {
+    query['metadata.createdAt'] = { $lt: new Date(before) };
+  }
+  
+  return this.find(query)
+    .populate('senderId', 'phoneNumber profile.displayName profile.avatar')
+    .populate('receiverId', 'phoneNumber profile.displayName profile.avatar')
+    .sort({ 'metadata.createdAt': -1 })
+    .skip(skip)
+    .limit(limit)
+    .exec();
+};
+
+/**
+ * Get group chat history
+ * @param {string} groupId - Group ID
+ * @param {Object} options - Pagination options
+ * @returns {Promise<Array>}
+ */
+messageSchema.statics.getGroupChatHistory = function(groupId, options = {}) {
+  const { page = 1, limit = 20, before = null } = options;
+  const skip = (page - 1) * limit;
+  
+  const query = {
+    groupId,
+    'flags.isDeleted': false
+  };
+  
+  if (before) {
+    query['metadata.createdAt'] = { $lt: new Date(before) };
+  }
+  
+  return this.find(query)
+    .populate('senderId', 'phoneNumber profile.displayName profile.avatar')
+    .sort({ 'metadata.createdAt': -1 })
+    .skip(skip)
+    .limit(limit)
+    .exec();
+};
+
+/**
+ * Get unread message count for user
+ * @param {string} userId - User ID
+ * @returns {Promise<number>}
+ */
+messageSchema.statics.getUnreadCount = function(userId) {
+  return this.countDocuments({
+    receiverId: userId,
+    status: { $in: ['sent', 'delivered'] },
+    'flags.isDeleted': false
+  });
+};
+
+/**
+ * Mark all messages as read in a conversation
+ * @param {string} senderId - Sender ID
+ * @param {string} receiverId - Receiver ID
+ * @returns {Promise<number>} Number of messages marked as read
+ */
+messageSchema.statics.markConversationAsRead = async function(senderId, receiverId) {
+  try {
+    const result = await this.updateMany(
+      {
+        senderId,
+        receiverId,
+        status: { $in: ['sent', 'delivered'] },
+        'flags.isDeleted': false
+      },
+      {
+        $set: {
+          status: 'read',
+          'delivery.readAt': new Date()
+        }
+      }
+    );
+    
+    logger.debug('Conversation marked as read', {
+      senderId,
+      receiverId,
+      messagesUpdated: result.modifiedCount
+    });
+    
+    return result.modifiedCount;
+  } catch (error) {
+    logger.error('Error marking conversation as read:', error);
+    return 0;
+  }
+};
+
+/**
+ * Get recent conversations for a user
+ * @param {string} userId - User ID
+ * @param {number} limit - Number of conversations to return
+ * @returns {Promise<Array>}
+ */
+messageSchema.statics.getRecentConversations = function(userId, limit = 10) {
+  return this.aggregate([
+    {
+      $match: {
+        $or: [
+          { senderId: new mongoose.Types.ObjectId(userId) },
+          { receiverId: new mongoose.Types.ObjectId(userId) }
+        ],
+        'flags.isDeleted': false
+      }
+    },
+    {
+      $sort: { 'metadata.createdAt': -1 }
+    },
+    {
+      $group: {
+        _id: {
+          $cond: [
+            { $eq: ['$senderId', new mongoose.Types.ObjectId(userId)] },
+            '$receiverId',
+            '$senderId'
+          ]
+        },
+        lastMessage: { $first: '$$ROOT' },
+        unreadCount: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $eq: ['$receiverId', new mongoose.Types.ObjectId(userId)] },
+                  { $in: ['$status', ['sent', 'delivered']] }
+                ]
+              },
+              1,
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'otherUser'
+      }
+    },
+    {
+      $unwind: '$otherUser'
+    },
+    {
+      $sort: { 'lastMessage.metadata.createdAt': -1 }
+    },
+    {
+      $limit: limit
+    }
+  ]);
+};
+
+/**
+ * Transform output
+ */
+messageSchema.methods.toJSON = function() {
+  const message = this.toObject({ virtuals: true });
+  
+  // Remove sensitive metadata
+  if (message.metadata) {
+    delete message.metadata.ipAddress;
+    delete message.metadata.userAgent;
+  }
+  
+  return message;
+};
+
+// Create and export the model
+const Message = mongoose.model('Message', messageSchema);
+
+module.exports = Message;
