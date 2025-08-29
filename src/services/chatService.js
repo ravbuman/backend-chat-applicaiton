@@ -463,22 +463,28 @@ class ChatService {
    */
   async searchUsers(searchTerm, currentUserId, limit = 10) {
     try {
-      if (!searchTerm || searchTerm.trim().length < 3) {
-        throw new Error('Search term must be at least 3 characters long');
-      }
-
-      const searchRegex = new RegExp(searchTerm.trim(), 'i');
       const excludeIds = currentUserId ? [currentUserId] : [];
-
-      const users = await User.find({
-        phoneNumber: searchRegex,
-        isActive: true,
-        _id: { $nin: excludeIds }
-      })
-      .select('phoneNumber profile.displayName profile.avatar status lastSeen')
-      .limit(limit)
-      .exec();
-
+      let users;
+      if (!searchTerm || searchTerm.trim().length < 3) {
+        // Return all users except current user
+        users = await User.find({
+          isActive: true,
+          _id: { $nin: excludeIds }
+        })
+        .select('phoneNumber profile.displayName profile.avatar status lastSeen')
+        .limit(limit)
+        .exec();
+      } else {
+        const searchRegex = new RegExp(searchTerm.trim(), 'i');
+        users = await User.find({
+          phoneNumber: searchRegex,
+          isActive: true,
+          _id: { $nin: excludeIds }
+        })
+        .select('phoneNumber profile.displayName profile.avatar status lastSeen')
+        .limit(limit)
+        .exec();
+      }
       return {
         success: true,
         data: {
@@ -486,7 +492,6 @@ class ChatService {
           searchTerm
         }
       };
-
     } catch (error) {
       logger.error('Error searching users:', error, { searchTerm, currentUserId });
       throw error;

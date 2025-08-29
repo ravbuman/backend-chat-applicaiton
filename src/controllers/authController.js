@@ -88,13 +88,9 @@ const register = asyncHandler(async (req, res) => {
     // Set secure cookies
     setTokenCookies(res, result.tokens);
 
-    // Remove tokens from response body for security
+    // Send real tokens in response body for SPA
     const response = {
-      ...result,
-      tokens: {
-        accessToken: '***', // Hide in response
-        refreshToken: '***'
-      }
+      ...result
     };
 
     logger.info('User registration successful', {
@@ -140,13 +136,9 @@ const login = asyncHandler(async (req, res) => {
     // Set secure cookies
     setTokenCookies(res, result.tokens);
 
-    // Remove tokens from response body for security
+    // Send real tokens in response body for SPA
     const response = {
-      ...result,
-      tokens: {
-        accessToken: '***',
-        refreshToken: '***'
-      }
+      ...result
     };
 
     logger.info('User login successful', {

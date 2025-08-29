@@ -452,13 +452,14 @@ userSchema.statics.cleanupInactiveSessions = async function(minutesInactive = 30
  * Transform output (remove sensitive data)
  */
 userSchema.methods.toJSON = function() {
-  const user = this.toObject({ virtuals: true });
-  
+  if (!this) return {};
+  const user = this.toObject ? this.toObject({ virtuals: true }) : {};
   // Remove sensitive fields
-  delete user.pinHash;
-  delete user.security;
-  delete user.sessionData.refreshTokenVersion;
-  
+  if (user) {
+    delete user.pinHash;
+    delete user.security;
+    delete user.sessionData?.refreshTokenVersion;
+  }
   return user;
 };
 

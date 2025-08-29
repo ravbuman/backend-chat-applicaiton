@@ -317,11 +317,12 @@ const getOnlineUsers = asyncHandler(async (req, res) => {
  * GET /api/chat/search-users
  */
 const searchUsers = asyncHandler(async (req, res) => {
-  const { q: searchTerm, limit = 10 } = req.query;
+  let { q: searchTerm, limit = 10 } = req.query;
   const currentUserId = req.user._id.toString();
 
-  if (!searchTerm) {
-    throw createError.badRequest('Search term (q) is required');
+  // If searchTerm is 'all', treat as request for all users
+  if (searchTerm === 'all') {
+    searchTerm = '';
   }
 
   try {

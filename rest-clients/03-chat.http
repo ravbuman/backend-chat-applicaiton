@@ -283,7 +283,7 @@ Content-Type: application/json
 ###
 
 ### Search Users by Phone Number
-GET http://localhost:5000/api/chat/search-users?query=1234567890
+GET http://localhost:5000/api/chat/search-users?query=all
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGU5NjQ4ZjM4ZjIzMzAwMTUyYzU4YTMiLCJwaG9uZU51bWJlciI6IjEyMzQ1Njc4OTAiLCJpYXQiOjE2MjU5Mzc0ODcsImV4cCI6MTYyNTk0MTA4N30.sample_token
 
