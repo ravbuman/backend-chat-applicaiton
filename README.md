@@ -134,7 +134,7 @@ npm start
 | `JWT_SECRET` | JWT secret key (min 32 chars) | - | Yes |
 | `JWT_REFRESH_SECRET` | Refresh token secret | - | Yes |
 | `COOKIE_SECRET` | Cookie signing secret | - | Yes |
-| `CORS_ORIGIN` | Allowed CORS origins | http://localhost:3000 | No |
+| `CORS_ORIGIN` | Allowed CORS origins | https://chat-app-ravi.vercel.app | No |
 | `SESSION_TIMEOUT_MINUTES` | Session timeout | 5 | No |
 
 ## 📡 API Endpoints

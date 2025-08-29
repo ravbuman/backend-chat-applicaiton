@@ -11,7 +11,7 @@
 # ws://localhost:5000/socket.io/
 
 ### Browser Console WebSocket Test
-# Open browser console at http://localhost:3000 and run:
+# Open browser console at https://chat-app-ravi.vercel.app and run:
 # 
 # const socket = io('http://localhost:5000', {
 #   auth: {

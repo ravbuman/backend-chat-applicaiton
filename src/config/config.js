@@ -37,7 +37,7 @@ const envSchema = joi.object({
   
   // Cookie Configuration
   COOKIE_SECRET: joi.string().min(32).required(),
-  COOKIE_DOMAIN: joi.string().default('localhost'),
+  COOKIE_DOMAIN: joi.string().default('https://chat-app-ravi.vercel.app'),
   COOKIE_SECURE: joi.boolean().default(false),
   
   // Rate Limiting
@@ -50,14 +50,14 @@ const envSchema = joi.object({
   PIN_RETRY_WINDOW_MINUTES: joi.number().default(15),
   
   // CORS Configuration
-  CORS_ORIGIN: joi.string().default('http://localhost:3000'),
+  CORS_ORIGIN: joi.string().default('https://chat-app-ravi.vercel.app'),
   
   // Logging Configuration
   LOG_LEVEL: joi.string().valid('error', 'warn', 'info', 'debug').default('info'),
   LOG_FILE: joi.string().default('logs/app.log'),
   
   // WebSocket Configuration
-  WS_CORS_ORIGIN: joi.string().default('http://localhost:3000'),
+  WS_CORS_ORIGIN: joi.string().default('https://chat-app-ravi.vercel.app'),
   WS_HEARTBEAT_INTERVAL: joi.number().default(25000),
   WS_HEARTBEAT_TIMEOUT: joi.number().default(60000)
 }).unknown();
